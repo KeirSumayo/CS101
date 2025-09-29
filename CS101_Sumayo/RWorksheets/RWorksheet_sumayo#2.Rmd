@@ -65,7 +65,41 @@ knitr::opts_chunk$set(echo = TRUE)
   
   diesel_purchase
   
+  #b
+  average <- weighted.mean(price_per_liter, purchase_quantity)
+  average
 ```
+
+```{r}
+  #7
+  rivers
+  data <- c(length(rivers), sum(rivers), mean(rivers), median(rivers), var(rivers), sd(rivers), min(rivers), max(rivers))
+  data
+
+```
+
+```{r}
+  #8
+  #a
+  power_ranking <- 1:25
+  celebrity_name <- c("Tom Cruise", "Rolling Stones", "Oprah Winfrey", "U2", "Tiger Woods", "Steven Spielberg", "Howard Stern", "50 Cent", "Cast of the Sopranos", "Dan Brown", "Bruce Springsteen", "Donald Trump", "Muhammad Ali", "Paul McCartney", "George Lucas", "Elton John", "David Letterman", "Phil Michelson", "J.K Rowling", "Bradd Pitt", "Peter Jackson", "Dr. Phil McGraw", "Jay Lenon", "Celine Dion", "Kobe Bryant")
+  pay <- c(67, 90, 225, 110, 90, 332, 302, 41, 52, 88, 55, 44, 55, 40, 233, 34, 40, 47, 75, 25, 39, 45, 32, 40, 31)
+  
+  table_orig <- data.frame(
+    Power_Ranking = power_ranking,
+    Celebrity_Name = celebrity_name,
+    Pay = pay
+  )
+  
+  table_orig
+  
+  #b
+  table_orig$Power_Ranking[table_orig$Celebrity_Name=="J.K Rowling"] <- 15
+  table_orig$Pay[table_orig$Celebrity_Name=="J.K Rowling"] <- 90
+  
+  table_orig[table_orig$Celebrity_Name=="J.K Rowling",]
+```
+
 
 
 
