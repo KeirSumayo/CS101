@@ -1,0 +1,176 @@
+---
+title: "RWorksheet3b in R"
+author: "Keir G. Sumayo"
+date: "2025-10-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###1.
+```{r}
+#A.
+respondents <- c(1:20)
+sex <- c(2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1,2)
+f_occupation <- c(1,3,3,3,1,2,3,1,1,1,3,2,1,3,3,1,3,1,2,1)
+persons_at_home <- c(5,7,3,8,5,9,6,7,8,4,7,5,4,7,8,8,3,11,7,6)
+siblings_at_school <- c(6,4,4,1,2,1,5,3,1,2,3,2,5,5,2,1,2,5,3,2)
+types_of_houses <- c(1,2,3,1,1,3,3,1,2,3,2,3,2,2,3,3,3,3,3,2)
+
+table <- data.frame (
+  Respondents = respondents,
+  Sex = sex,
+  Fathers_Occupation = f_occupation,
+  Persons_at_Home = persons_at_home,
+  Siblings_at_School = siblings_at_school,
+  Types_of_houses = types_of_houses
+)
+
+table
+
+#B.
+#These are datas of 20 people, all 6 columns has no missing data.
+
+#C. Is the mean number of siblings attending is 5?
+mean_siblings <- mean(siblings_at_school)
+mean_siblings
+
+#No
+
+#D.
+#Using head()
+head(table, n = 2)
+
+#Using subset()
+subset(table, subset = respondents %in% c(1,2))
+
+#E.
+target_cols <- c("Sex", "Persons_at_Home")
+
+#Using head()
+head_table <- head(table, n = 5)
+head_table[c(3, 5), target_cols]
+
+#Using subset()
+subset(table,
+       subset = respondents %in% c(3,5),
+       select = c(2,4))
+
+#F.
+types_houses <- table$Types_of_houses
+types_houses
+
+#G.
+#Using subset()
+selected_data_male <- subset(table, subset = Sex == 1 & Fathers_Occupation == 1)
+selected_data_male
+
+#There is none, because there is no male that has a father who has a occupation of farmer.
+
+#H.
+selected_data_female <- subset(table, subset = Sex == 2 & Siblings_at_School >= 5)
+selected_data_female
+```
+###2.
+```{r}
+df = data.frame(
+  
+Ints=integer(),
+Doubles=double(), 
+Characters=character(),
+Logicals=logical(),
+Factors=factor(),
+stringsAsFactors=FALSE)
+
+print("Structure of the empty dataframe:")
+print(str(df))
+
+#A.
+#The output confirms the creation of an empty data frame with five columns ready to accept data of the specified types.
+```
+
+###3.
+```{r}
+HouseholdData <- data.frame (
+  Respondents = c(1:10),
+  Sex = c("Male", "Female", "Female", "Male", "Male", "Female", "Female", "Male", "Female", "Male"),
+  Fathers_Occupation = c(1,2,3,3,1,2,2,3,1,3),
+  Persons_at_Home = c(5,7,3,8,6,4,4,2,11,6),
+  Siblings_at_School = c(2,3,0,5,2,3,1,2,6,2),
+  Types_of_Houses = c("Wood", "Congrete", "Congrete", "Wood", "Semi-congrete", "Semi-congrete", "Wood", "Semi-congrete", "Semi-congrete", "Congrete")
+)
+
+write.csv(HouseholdData, "/cloud/project/CS101_Sumayo/RWorksheets/HouseholdData.csv",
+          row.names = FALSE)
+
+#A.
+householddata_imported <- read.csv("HouseholdData.csv",
+                                   header = TRUE)
+head(householddata_imported, n = 10)
+
+#B.
+householddata_imported$Sex <- factor(householddata_imported$Sex,
+                                     levels = c("Male", "Female"),
+                                     labels = c(1, 2))
+householddata_imported
+
+#C.
+householddata_imported$Types_of_Houses <- factor(householddata_imported$Types_of_Houses,
+                                      levels = c("Wood", "Congrete", "Semi-congrete"),
+                                      labels = c(1,2,3))
+householddata_imported
+
+#D.
+householddata_imported$Fathers_Occupation <- factor(householddata_imported$Fathers_Occupation,
+                                      levels = c(1,2,3),
+                                      labels = c("Farmer", "Driver", "Others"))
+householddata_imported
+
+#E.
+select_f_driver <- subset(householddata_imported, subset = Sex == 2 & Fathers_Occupation == "Driver")
+
+select_f_driver
+
+#F.
+selected_data_both <- subset(householddata_imported, subset = Siblings_at_School >= 5)
+
+selected_data_both
+```
+
+###4.
+```{r}
+library(ggplot2)
+
+ggplot(householddata_imported, aes(x = Sex, fill = Sex)) +
+  geom_bar() +
+  labs(title = "Distribution of Respondents by Sex",
+       x = "Sex", y = "Count") +
+  scale_fill_manual(values = c("skyblue", "pink")) +
+  theme_minimal()
+
+ggplot(householddata_imported, aes(x = Fathers_Occupation, fill = Fathers_Occupation)) +
+  geom_bar() +
+  labs(title = "Father's Occupation of Respondents",
+       x = "Occupation", y = "Count") +
+  scale_fill_brewer(palette = "Set2") +
+  theme_minimal()
+
+ggplot(householddata_imported, aes(x = Types_of_Houses, fill = Types_of_Houses)) +
+  geom_bar() +
+  labs(title = "Types of Houses of Respondents",
+       x = "Type of House", y = "Count") +
+  scale_fill_manual(values = c("tan", "grey", "lightblue")) +
+  theme_minimal()
+
+ggplot(householddata_imported, aes(x = factor(Respondents), y = Persons_at_Home)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  labs(
+    title = "Number of Persons per Household",
+    x = "Respondent (Family)",
+    y = "Number of Persons at Home"
+  ) +
+  theme_minimal()
+```
+
