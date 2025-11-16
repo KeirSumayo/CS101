@@ -1,0 +1,199 @@
+---
+title: "RWorksheet4b in R"
+author: "Keir G. Sumayo"
+date: "2025-11-15"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###1.
+```{r}
+vectorA <- c(1:5)
+matrix5x5 <- matrix(0, nrow = 5, ncol = 5)
+
+for (i in 1:5) {
+  for (j in 1:5) {
+    matrix5x5[i,j] <- abs(i - j)
+  }
+}
+
+print(matrix5x5)
+```
+
+###2.
+```{r}
+for (i in 1:5) {
+  cat(rep("*", i), sep = "", "\n")
+}
+```
+
+###3.
+```{r}
+a <- 0
+b <- 1
+
+cat(a, ", ", sep = "")
+
+repeat {
+  cat(b, ", ", sep = "")
+  next_val <- a + b
+  a <- b
+  b <- next_val
+  
+  if (b > 500) {
+    break
+  }
+}
+```
+
+###4.
+```{r}
+table <- read.csv("shoe_data.csv")
+
+print(table)
+
+#A.
+head(table)
+
+#B.
+males <- subset(table, gender == "Male")
+females <- subset(table, gender == "Female")
+
+nrow(males)
+nrow(females)
+
+#C.
+gender_count <- table(table$gender)
+
+barplot(gender_count,
+        main = "Number of Males and Females",
+        xlab = "Gender",
+        ylab = "Count",
+        col = c("lightblue", "pink"),
+        legend.text = TRUE)
+```
+###5.
+```{r}
+expenses <- c(Food = 60, Electricity = 10, Savings = 5, Miscellaneous = 25)
+              
+labels <- paste(names(expenses), expenses, "%", sep = " ")
+
+pie(expenses,
+    labels = labels,
+    col = c("skyblue", "lightgreen", "gold", "lightcoral"),
+    main = "Monthly Income Distribution of Dela Cruz Family",
+    clockwise = TRUE)
+```
+
+###6.
+```{r}
+data(iris)
+
+#A.
+str(iris)
+
+#Datas inside of iris
+
+#B.
+iris_means <- c(
+  Sepal.Length = mean(iris$Sepal.Length),
+  Sepal.Width  = mean(iris$Sepal.Width),
+  Petal.Length = mean(iris$Petal.Length),
+  Petal.Width  = mean(iris$Petal.Width)
+)
+
+iris_means
+
+#C.
+species_counts <- table(iris$Species)
+
+pie(species_counts,
+    main = "Iris Species Distribution",
+    col = c("lightblue", "lightgreen", "pink"),
+    labels = paste(names(species_counts), " (", species_counts, ")", sep = ""),
+    cex = 0.8)
+
+legend("topright", legend = names(species_counts), fill = c("lightblue", "lightgreen", "pink"))
+
+#D.
+setosa <- subset(iris, Species == "setosa")
+versicolor <- subset(iris, Species == "versicolor")
+virginica <- subset(iris, Species == "virginica")
+
+tail(setosa)
+tail(versicolor)
+tail(virginica)
+
+#E.
+plot(iris$Sepal.Length, iris$Sepal.Width,
+     pch = as.numeric(iris$Species),
+     col = as.numeric(iris$Species),
+     xlab = "Sepal Length", ylab = "Sepal Width",
+     main = "Iris Dataset", sub = "Sepal width and length")
+
+legend("topright", legend = levels(iris$Species),
+       pch = 1:3, col = 1:3)
+
+#F.
+#setosa is scattered on the top right of the table and versicolo and virginica is scrambled together
+```
+###7.
+```{r}
+library(readxl)
+
+data <- read_excel("alexa-file.xlsx")
+
+print(data)
+
+#A.
+data$variation <- gsub("\\s+", " ", trimws(data$variation))
+
+data$variation <- gsub("Black ", "Black", data$variation) 
+data$variation <- gsub("White ", "White", data$variation) 
+
+knitr::include_graphics("autumn-flowers-22122594.jpeg")
+
+#B.
+library(dplyr)
+
+data <- read_excel("alexa-file.xlsx")
+
+data$variation <- gsub("\\s+", " ", trimws(data$variation))
+
+variations <- data %>%
+  count(variation, name = "count")
+
+save(variations, file = "variations.RData")
+
+print(variations)
+
+#C.
+load("variations.RData")
+
+barplot(variations$count, 
+        names.arg = variations$variation,
+        main = "Count of Alexa Device Variations",
+        xlab = "Device Variation",
+        ylab = "Frequency",
+        col = "lightblue",
+        las = 2)
+
+#D.
+load("variations.RData")
+
+black_variations <- subset(variations, grepl("Black", variation))
+white_variations <- subset(variations, grepl("White", variation))
+
+black_total <- sum(black_variations$count)
+white_total <- sum(white_variations$count)
+
+barplot(c(Black = black_total, White = white_total),
+        main = "Black vs White Alexa Variations",
+        xlab = "Variation Type",
+        ylab = "Total Count",
+        col = c("black", "white"),
+        legend.text = TRUE)
+```

@@ -1,0 +1,195 @@
+---
+title: "RWorksheet4a in  R"
+author: "Keir G. Sumayo"
+date: "2025-11-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#1.
+```{r}
+#A.
+shoe_size <- c(6.5,9.0,8.5,8.5,10.5,7.5,9.5,9.0,13.0,7.5,10.5,8.5,12.0,10.5,13.0,11.5,8.5,5.0,10.0,6.5,7.5,8.5,10.5,8.5,10.5,11.0,9.0,13.0)
+shoe_height <- c(66,68,64.5,65,70,64,70,71,72,64,74.5,67,71,71,77,72,59,62,72,66,64,67,73,69,72,70,69,70)
+
+table <- data.frame (
+  Shoe_Size = shoe_size,
+  Shoe_Height = shoe_height
+)
+
+print(table)
+
+write.csv(table, "shoe_data.csv", row.names = FALSE)
+
+#It create a data base containing the shoe size and height.
+
+#B.
+table$gender <- c("Male", "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female",
+                  "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female",
+                  "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female", "Male")
+
+print(table)
+
+males <- subset(table, gender == "Male")
+females <- subset(table, gender == "Female")
+
+print(males)
+print(females)
+
+#C.
+mean(table$Shoe_Height)
+
+#D.
+#Yes there are, because taller individuals tend to have bigger footsize.
+
+```
+
+###2.
+```{r}
+months <- c("March","April","January","November","January","September","October","September","November","August","January","November","November","February","May","August","July","December","August","August","September","November","February","April")
+
+factor_months_vector <- factor(months)
+
+factor_months_vector
+
+```
+
+###3.
+```{r}
+summary(months)
+
+summary(factor_months_vector)
+```
+
+###4.
+```{r}
+direction <- c("Easy", "West", "North")
+frequency <- c(1,4,3)
+
+table <- data.frame (
+  Direction = direction,
+  Frequency = frequency
+)
+print(table)
+
+factor_direction <- factor(direction,levels = c("Easy", "West", "North"))
+print(factor_direction)
+```
+
+###5.
+```{r}
+#A.
+data <- read.table(file = "import_march.csv", header = TRUE, sep = ",")
+
+#B.
+print(data)
+```
+
+###6.
+```{r}
+exhaustive_search <- function(num) {
+  if (is.na(num)) {
+    cat("Invalid input. Please enter a numeric value.\n")
+  } else if (num < 1 || num > 50) {
+    cat("The number selected is beyond the range of 1 to 50\n")
+  } else {
+    if (num == 20) {
+      cat("TRUE\n")
+    } else {
+      cat(num, "\n")
+    }
+  }
+}
+
+# Test with sample inputs
+exhaustive_search(20)
+exhaustive_search(25)
+exhaustive_search(100)
+```
+
+###7.
+```{r}
+min_bills <- function(price) {
+  bills <- c(1000, 500, 200, 100, 50)
+  
+  if (price %% 50 != 0) {
+    cat("Error: Price must be divisible by 50.\n")
+    return(NULL)
+  }
+  
+  count <- 0
+  remaining <- price
+  
+  #large first
+  for (bill in bills) {
+    if (remaining >= bill) {
+      num_bills <- remaining %/% bill
+      count <- count + num_bills
+      remaining <- remaining %% bill
+    }
+  }
+  
+  cat("Minimum number of bills needed:", count, "\n")
+  return(count)
+}
+
+min_bills(300)
+min_bills(1000)
+min_bills(650)
+```
+
+###8.
+```{r}
+#A.
+grades_df <- data.frame(
+  Name = c("Annie", "Thea", "Steve", "Hanna"),
+  Grade1 = c(85, 65, 75, 95),
+  Grade2 = c(65, 75, 55, 75),
+  Grade3 = c(85, 90, 80, 100),
+  Grade4 = c(100, 90, 85, 90)
+)
+
+grades_df
+
+#B.
+averages <- (grades_df$Grade1 + grades_df$Grade2 + grades_df$Grade3 + grades_df$Grade4) / 4
+
+high_achievers <- grades_df[averages >= 90, ]
+high_averages <- averages[averages >= 90]
+
+for (i in 1:nrow(high_achievers)) {
+  cat(high_achievers$Name[i], "'s average grade this semester is ", high_averages[i], ".\n", sep = "")
+}
+
+#C.
+avg_grade1 <- sum(grades_df$Grade1) / nrow(grades_df)
+avg_grade2 <- sum(grades_df$Grade2) / nrow(grades_df)
+avg_grade3 <- sum(grades_df$Grade3) / nrow(grades_df)
+avg_grade4 <- sum(grades_df$Grade4) / nrow(grades_df)
+
+test_avgs <- c(avg_grade1, avg_grade2, avg_grade3, avg_grade4)
+test_names <- c("Grade1", "Grade2", "Grade3", "Grade4")
+
+for (i in 1:length(test_avgs)) {
+  if (test_avgs[i] < 80) {
+    cat("The", test_names[i], "was difficult.\n")
+  }
+}
+
+#D.
+highest_grades <- apply(grades_df[, 2:5], 1, function(row) {
+  sorted <- sort(as.numeric(row))
+  sorted[length(sorted)]
+})
+
+for (i in 1:nrow(grades_df)) {
+  name <- grades_df$Name[i]
+  high_score <- highest_grades[i]
+  if (high_score > 90) {
+    cat(name, "'s highest grade this semester is ", high_score, ".\n", sep = "")
+  }
+}
+```
