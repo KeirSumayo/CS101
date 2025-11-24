@@ -21,11 +21,16 @@ table <- data.frame (
 )
 
 print(table)
+str(table)
+```
 
+
+```{r}
 write.csv(table, "shoe_data.csv", row.names = FALSE)
+```
 
-#It create a data base containing the shoe size and height.
 
+```{r}
 #B.
 table$gender <- c("Male", "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female",
                   "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female", "Male", "Female",
@@ -38,7 +43,10 @@ females <- subset(table, gender == "Female")
 
 print(males)
 print(females)
+```
 
+
+```{r}
 #C.
 mean(table$Shoe_Height)
 
@@ -69,12 +77,6 @@ summary(factor_months_vector)
 direction <- c("Easy", "West", "North")
 frequency <- c(1,4,3)
 
-table <- data.frame (
-  Direction = direction,
-  Frequency = frequency
-)
-print(table)
-
 factor_direction <- factor(direction,levels = c("Easy", "West", "North"))
 print(factor_direction)
 ```
@@ -90,45 +92,48 @@ print(data)
 
 ###6.
 ```{r}
-exhaustive_search <- function(num) {
-  if (is.na(num)) {
-    cat("Invalid input. Please enter a numeric value.\n")
-  } else if (num < 1 || num > 50) {
-    cat("The number selected is beyond the range of 1 to 50\n")
-  } else {
-    if (num == 20) {
-      cat("TRUE\n")
+search <- function() {
+  user_input <- readline(prompt = "Please enter a number between 1 and 50: ")
+  chosen_number <- as.numeric(user_input)
+  if (is.na(chosen_number)) {
+    print("Invalid input. Please enter a numeric value.")
+  } else if (chosen_number < 1 || chosen_number > 50) {
+    print("The number selected is beyond the range of 1 to 50")
+  } else if(chosen_number == 20) {
+      cat("TRUE")
     } else {
-      cat(num, "\n")
+      cat(chosen_number)
     }
   }
-}
 
-# Test with sample inputs
-exhaustive_search(20)
-exhaustive_search(25)
-exhaustive_search(100)
+
+search()
 ```
 
 ###7.
 ```{r}
-min_bills <- function(price) {
-  bills <- c(1000, 500, 200, 100, 50)
+min_bills <- function() {
+  user_input <- readline(prompt="Enter the price of the snack (must be a number divisible by 50): ")
+  snack_price <- as.numeric(user_input)
   
-  if (price %% 50 != 0) {
-    cat("Error: Price must be divisible by 50.\n")
-    return(NULL)
-  }
+ if (is.na(snack_price) || snack_price <= 0 || snack_price %% 50 != 0) {
+    cat("Invalid input: Please enter a positive numeric value divisible by 50.\n")
+    return(NULL) 
+ }
   
+  bills <- c(1000, 500, 200, 100, 50, 20) 
+  remaining <- snack_price
   count <- 0
-  remaining <- price
   
   #large first
   for (bill in bills) {
     if (remaining >= bill) {
-      num_bills <- remaining %/% bill
+      num_bills <- floor(remaining / bill) 
       count <- count + num_bills
       remaining <- remaining %% bill
+    if (num_bills > 0) {
+          cat(sprintf("- %d x %s%d bill(s)\n", num_bills, "\u20b1", bill))
+      }
     }
   }
   
@@ -136,9 +141,7 @@ min_bills <- function(price) {
   return(count)
 }
 
-min_bills(300)
-min_bills(1000)
-min_bills(650)
+min_bills()
 ```
 
 ###8.
@@ -153,7 +156,9 @@ grades_df <- data.frame(
 )
 
 grades_df
+```
 
+```{r}
 #B.
 averages <- (grades_df$Grade1 + grades_df$Grade2 + grades_df$Grade3 + grades_df$Grade4) / 4
 
@@ -164,6 +169,11 @@ for (i in 1:nrow(high_achievers)) {
   cat(high_achievers$Name[i], "'s average grade this semester is ", high_averages[i], ".\n", sep = "")
 }
 
+high_achievers
+high_averages
+```
+
+```{r}
 #C.
 avg_grade1 <- sum(grades_df$Grade1) / nrow(grades_df)
 avg_grade2 <- sum(grades_df$Grade2) / nrow(grades_df)
@@ -178,7 +188,10 @@ for (i in 1:length(test_avgs)) {
     cat("The", test_names[i], "was difficult.\n")
   }
 }
+```
 
+
+```{r}
 #D.
 highest_grades <- apply(grades_df[, 2:5], 1, function(row) {
   sorted <- sort(as.numeric(row))
