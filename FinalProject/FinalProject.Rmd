@@ -1,0 +1,197 @@
+---
+title: "FinalProject in R"
+author: "Keir G. Sumayo, Daven Parita, James Harry Prado"
+date: "2025-12-14"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+```
+
+```{r}
+transport <- read.csv(
+  "Transportation Uses for BSIT Students (Responses).csv",
+  stringsAsFactors = FALSE
+)
+
+transport$Timestamp <- NULL
+transport$X. <- NULL
+
+transport <- transport %>%
+  mutate(across(where(is.character), ~ gsub("^Bh$", "BH", .)))
+
+data <- transport %>%
+  rename(
+    Q1 = X1..Where.do.you.live.,
+    Q2 = X2..Please.indicate.how.many.rides.you.take.to.reach.the.school.,
+    Q3 = X3..How.long.does.it.take.for.you.to.reach.school.from.home.,
+    Q3A = a..How.much.is.your.one.way.fare.to.school.,
+    Q3B = b..How.much.is.your.total.daily.fare..round.trip..,
+    Feedback = What.are.your.thoughts.or.feedback.about.this.survey.
+  )
+```
+
+```{r}
+str(transport)
+head(transport)
+colSums(is.na(transport))
+```
+
+```{r}
+write.csv(
+  data,
+  "Transportation_Uses_Cleaned.csv",
+  row.names = FALSE
+)
+```
+
+```{r}
+data <- read.csv("Transportation_Uses_Cleaned.csv")
+str(data)
+```
+
+**********
+
+The bar chart titled "Distribution of Living Arrangements" shows where BSIT students from ISATU Lapaz live. The x-axis lists four categories: BH (Boarding House), Dormitory, Family House, and Relative's House, while the y-axis shows the number of students in each category.
+```{r}
+living_counts <- data %>%
+  count(Q1)
+
+ggplot(living_counts, aes(x = Q1, y = n, fill = Q1)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribution of Living Arrangements",
+       x = "Where do you live?",
+       y = "Number of Students") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+This reflects common living patterns among college students in Iloilo City, where many commute from home, while others choose affordable boarding options near their school.
+
+**********
+
+The bar chart titled "Distribution of Number of Rides to School" shows how many BSIT students from ISATU Lapaz take to reach campus. The x-axis represents the number of rides (1 ride, 2 rides, 3 rides, 4 or more rides), while the y-axis shows the number of students in each category.
+```{r}
+rides_counts <- data %>%
+  count(Q2)
+
+ggplot(rides_counts, aes(x = Q2, y = n, fill = Q2)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribution of Number of Rides to School",
+       x = "Number of Rides",
+       y = "Number of Students") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))   
+```
+Most students enjoy relatively simple commutes, reflecting ISATU Lapaz’s accessibility within the city’s transport network.
+
+**********
+
+The bar chart titled "Distribution of One-Way Fare to School" shows how much BSIT students spend on a single trip to school. The x-axis displays fare ranges in Philippine pesos (₱), while the y-axis shows the number of students in each category.
+```{r}
+time_counts <- data %>%
+  count(Q3)
+
+ggplot(time_counts, aes(x = Q3, y = n, fill = Q3)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribution of Travel Time to School",
+       x = "Travel Time",
+       y = "Number of Students") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+The concentration of fares in this range reflects the affordability and accessibility of public transportation in Iloilo, supporting student mobility across the city. With safe, well-established routes and a student discount policy, most students can commute efficiently without excessive financial burden.
+
+**********
+
+The bar chart titled "Distribution of One-Way Fare to School" shows how much BSIT students spend on a single trip to school. The x-axis displays fare ranges in Philippine pesos (₱), while the y-axis shows the number of students in each category.
+```{r}
+one_way_fare_counts <- data %>%
+  count(Q3A)
+
+ggplot(one_way_fare_counts, aes(x = Q3A, y = n, fill = Q3A)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribution of One-Way Fare to School",
+       x = "One-Way Fare",
+       y = "Number of Students") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))   
+```
+For students traveling from areas like Ungka, La Paz Plaza, or nearby barangays to ISATU, a one-way trip typically involves a short to moderate distance, resulting in fares between ₱13 and ₱45, depending on the starting point.
+
+**********
+
+The bar chart titled "Distribution of Total Daily Fare (Round Trip)" shows how much BSIT students spend on their daily round-trip commute to school. The x-axis represents different fare ranges in Philippine pesos (₱), while the y-axis shows the number of students in each category.
+```{r}
+total_fare_counts <- data %>%
+  count(Q3B)
+
+ggplot(total_fare_counts, aes(x = Q3B, y = n, fill = Q3B)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Distribution of Total Daily Fare (Round Trip)",
+       x = "Total Daily Fare",
+       y = "Number of Students") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))   
+```
+This fare distribution reflects the affordability and accessibility of public transport in Iloilo, supporting student mobility across the city. With safe, well-established routes and a student-friendly discount system, most students can commute efficiently without excessive financial burden.
+
+**********
+
+The bar chart titled "Sentiment Distribution" displays feedback classified into three categories: positive, neutral, and negative, with counts on the y-axis. Based on the visual, there are very few responses in each category, only a small number of feedback entries were provided by respondents.
+```{r}
+df <- data.frame(
+  Feedback = c(
+    "It may not be perfect but it's nice, keep up the good work",
+    "Good",
+    "Oks lang",
+    "None",
+    "This is confusing and has a bug",
+    "No option available",
+    "Very helpful and clear"
+  )
+)
+
+feedbacks <- df$Feedback[!is.na(df$Feedback)]
+
+# Define keywords
+positive_words <- c("good", "nice", "appreciate", "easy", "clear", "helpful", "perfect", 
+                    "keep up", "achieve", "relevant", "helps", "hope", "analyze", "not bad")
+negative_words <- c("confusing", "wrong", "bugging", "problem", "no option", "bad")
+
+# Sentiment classification function
+classify_sentiment <- function(fb) {
+  fb_lower <- tolower(fb)
+  if (any(sapply(negative_words, grepl, fb_lower, fixed = TRUE))) {
+    return("negative")
+  } else if (any(sapply(positive_words, grepl, fb_lower, fixed = TRUE))) {
+    return("positive")
+  } else {
+    return("neutral")
+  }
+}
+
+sentiments <- sapply(feedbacks, classify_sentiment)
+
+sentiment_counts <- table(sentiments)
+sentiment_df <- as.data.frame(sentiment_counts)
+colnames(sentiment_df) <- c("Sentiment", "Count")
+
+ggplot(sentiment_df, aes(x = Sentiment, y = Count, fill = Sentiment)) +
+  geom_col() +
+  labs(title = "Sentiment Distribution", x = "Sentiment", y = "Count") +
+  theme_minimal() +
+  scale_fill_manual(values = c("positive" = "green", "neutral" = "gray", "negative" = "red"))   
+```
+A key observation is that most respondents did not provide any feedback at all, leaving the field blank, marked as "NA", or writing minimal responses like "None". This explains the low counts in the chart. As a result, the sample of readable, meaningful feedback is quite limited, which reduces the overall representativeness of the sentiment analysis.
+
+
+
+
+
